@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mój Planer Zdrowia: Endometrioza & Dieta</title>
+    <script src="[suspicious link removed]"></script>
+    <link href="[suspicious link removed]" rel="stylesheet">
+</head>
+<body class="bg-rose-50 text-slate-800 font-sans min-h-screen pb-16">
+
+    <!-- Nagłówek -->
+    <header class="bg-gradient-to-r from-rose-500 to-pink-600 text-white p-5 shadow-lg">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold flex items-center gap-2">
+                    <i class="fa-solid font-heart-pulse"></i> Mój Planer Zdrowia
+                </h1>
+                <p class="text-xs text-rose-100 mt-1">Endometrioza • Adenomioza • Dieta Przeciwzapalna & Niski IG</p>
+            </div>
+            <div class="text-right">
+                <span id="current-date" class="text-sm font-medium bg-rose-700/50 px-3 py-1 rounded-full"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Nawigacja Zakładek -->
+    <nav class="bg-white shadow-md border-b border-rose-100 sticky top-0 z-10">
+        <div class="max-w-4xl mx-auto flex justify-around text-sm font-medium">
+            <button onclick="switchTab('planer')" id="tab-planer" class="tab-btn py-3 px-2 text-rose-600 border-b-2 border-rose-500 font-bold flex items-center gap-1">
+                <i class="fa-solid fa-calendar-check"></i> Plan & Zadania
+            </button>
+            <button onclick="switchTab('cykl')" id="tab-cykl" class="tab-btn py-3 px-2 text-slate-500 hover:text-rose-500 flex items-center gap-1">
+                <i class="fa-solid fa-notes-medical"></i> Cykl & Objawy
+            </button>
+            <button onclick="switchTab('przepisy')" id="tab-przepisy" class="tab-btn py-3 px-2 text-slate-500 hover:text-rose-500 flex items-center gap-1">
+                <i class="fa-solid fa-utensils"></i> Przepisy
+            </button>
+            <button onclick="switchTab('zakupy')" id="tab-zakupy" class="tab-btn py-3 px-2 text-slate-500 hover:text-rose-500 flex items-center gap-1">
+                <i class="fa-solid fa-basket-shopping"></i> Zakupy
+            </button>
+            <button onclick="switchTab('nawodnienie')" id="tab-nawodnienie" class="tab-btn py-3 px-2 text-slate-500 hover:text-rose-500 flex items-center gap-1">
+                <i class="fa-solid fa-droplet"></i> Self-Care
+            </button>
+        </div>
+    </nav>
+
+    <!-- Główny Kontener -->
+    <main class="max-w-4xl mx-auto p-4 space-y-6">
+
+        <!-- 1. PLANER I ZADANIA -->
+        <section id="sec-planer" class="tab-content space-y-6">
+            <!-- Ramowy grafik -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-rose-100">
+                <h2 class="text-lg font-bold text-rose-700 mb-3 flex items-center gap-2">
+                    <i class="fa-regular fa-clock"></i> Stałe Kotwice Dnia
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                    <div class="p-3 bg-rose-50 rounded-xl border border-rose-100">
+                        <span class="font-bold text-rose-800">05:30 – 14:45</span>
+                        <p class="text-xs text-slate-600 mt-1">Wstanie, woda z cytryną, praca na etacie.</p>
+                    </div>
+                    <div class="p-3 bg-amber-50 rounded-xl border border-amber-100">
+                        <span class="font-bold text-amber-800">15:00 – 16:00 ⭐ PRIORYTET</span>
+                        <p class="text-xs text-slate-600 mt-1">Spacer z psem przed zmrokiem (światło + ruch).</p>
+                    </div>
+                    <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                        <span class="font-bold text-emerald-800">16:00 – 16:30</span>
+                        <p class="text-xs text-slate-600 mt-1">Obiad (odgrzanie gotowego posiłku) & odpoczynek.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista Zadań (To-Do) -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-rose-100">
+                <h2 class="text-lg font-bold text-rose-700 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check"></i> Elastyczna Lista Zadań
+                </h2>
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="new-task-input" placeholder="Dodaj zadanie (np. korepetycje, pranie, weterynarz)..." class="flex-1 px-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400">
+                    <button onclick="addTask()" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition">Dodaj</button>
+                </div>
+                <ul id="task-list" class="space-y-2"></ul>
+            </div>
+        </section>
+
+        <!-- 2. CYKL I OBJAWY -->
+        <section id="sec-cykl" class="tab-content hidden space-y-6">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-rose-100">
+                <h2 class="text-lg font-bold text-rose-700 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-day"></i> Rejestrator Objawów i Bólu
+                </h2>
+                <form onsubmit="saveSymptom(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Poziom bólu miednicy / brzucha (1-10):</label>
+                        <input type="range" id="pain-level" min="1" max="10" value="3" oninput="document.getElementById('pain-val').innerText = this.value" class="w-full accent-rose-500">
+                        <div class="text-right text-xs text-rose-600 font-bold">Poziom: <span id="pain-val">3</span>/10</div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Objawy towarzyszące:</label>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <label class="bg-slate-100 p-2 rounded-lg flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Zmęczenie" class="symptom-tag"> Zmęczenie</label>
+                            <label class="bg-slate-100 p-2 rounded-lg flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Wzdęcia/Endo-belly" class="symptom-tag"> Wzdęcia</label>
+                            <label class="bg-slate-100 p-2 rounded-lg flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Plamienie" class="symptom-tag"> Plamienie</label>
+                            <label class="bg-slate-100 p-2 rounded-lg flex items-center gap-1 cursor-pointer"><input type="checkbox" value="Ból pleców" class="symptom-tag"> Ból pleców</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Notatki / Dzień cyklu:</label>
+                        <textarea id="symptom-notes" rows="2" placeholder="Napisz jak się dziś czujesz..." class="w-full p-2 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-400 focus:outline-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-rose-500 text-white py-2 rounded-xl text-sm font-bold hover:bg-rose-600 transition">Zapisz Wpis</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-rose-100">
+                <h3 class="text-md font-bold text-slate-700 mb-3">Ostatnie Wpisy</h3>
+                <div id="symptoms-history" class="space-y-2 text-sm text-slate-600"></div>
+            </div>
+        </section>
+
+        <!-- 3. PRZEPISY -->
+        <section id="sec-przepisy" class="tab-content hidden space-y-4">
+            <div class="bg-rose-100/60 p-4 rounded-xl text-xs text-rose-800">
+                💡 Wszystkie przepisy łączą zasady <strong>diety przeciwzapalnej</strong> (endometrioza/adenomioza) oraz <strong>niskiego indeksu glikemicznego</strong> (insulinooporność męża). Gotuj obiad na 2 dni!
+            </div>
+
+            <!-- Karty Przepisów -->
+            <div id="recipes-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </section>
+
+        <!-- 4. LISTA ZAKUPÓW -->
+        <section id="sec-zakupy" class="tab-content hidden space-y-6">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-rose-100">
+                <h2 class="text-lg font-bold text-rose-700 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-basket-shopping"></i> Tygodniowa Lista Zakupów
+                </h2>
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="new-shop-input" placeholder="Dodaj produkt do listy..." class="flex-1 px-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400">
+                    <button onclick="addShoppingItem()" class="bg-rose-500 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-rose-600 transition">Dodaj</button>
+                </div>
+                <div id="shopping-categories" class="space-y-4"></div>
+            </div>
+        </section>
+
+        <!-- 5. SELF-CARE I NAWODNIENIE -->
+        <section id="sec-nawodnienie" class="tab-content hidden space-y-6">
+            <!-- Woda -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-blue-100">
+                <h2 class="text-lg font-bold text-blue-600 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-glass-water"></i> Licznik Nawodnienia (Cel: 2.5L / 10 szklanek)
+                </h2>
+                <div class="flex items-center justify-between my-4">
+                    <span id="water-count" class="text-3xl font-extrabold text-blue-600">0 / 10</span>
+                    <div class="flex gap-2">
+                        <button onclick="changeWater(-1)" class="w-10 h-10 bg-blue-100 text-blue-700 rounded-full font-bold hover:bg-blue-200">-</button>
+                        <button onclick="changeWater(1)" class="w-10 h-10 bg-blue-500 text-white rounded-full font-bold hover:bg-blue-600">+</button>
+                    </div>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-3">
+                    <div id="water-bar" class="bg-blue-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Rutyny Self-care -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-rose-100 space-y-4">
+                <h2 class="text-lg font-bold text-rose-700 flex items-center gap-2">
+                    <i class="fa-solid fa-sparkles"></i> Wieczorna Rutyna (10 minut)
+                </h2>
+                <div class="space-y-2 text-sm">
+                    <label class="flex items-center gap-2 p-2 bg-rose-50/50 rounded-lg cursor-pointer">
+                        <input type="checkbox" class="accent-rose-500">
+                        <span><strong>Skóra:</strong> Mycie pianką bez SLS + serum z kwasem hialuronowym / krem hydrolipidowy.</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-rose-50/50 rounded-lg cursor-pointer">
+                        <input type="checkbox" class="accent-rose-500">
+                        <span><strong>Włosy:</strong> Wcierka nawilżająca + 3-minutowy masaż skóry głowy.</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-rose-50/50 rounded-lg cursor-pointer">
+                        <input type="checkbox" class="accent-rose-500">
+                        <span><strong>Miednica:</strong> Pozycja dziecka (Child's Pose) & głębokie oddechy przeponowe po spacerze.</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Skrypty Aplikacji -->
+    <script>
+        // Data w nagłówku
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('pl-PL', { weekday: 'short', day: 'numeric', month: 'short' });
+
+        // Zakładki
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('text-rose-600', 'border-b-2', 'border-rose-500', 'font-bold');
+                el.classList.add('text-slate-500');
+            });
+            document.getElementById('sec-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('tab-' + tabId);
+            activeBtn.classList.add('text-rose-600', 'border-b-2', 'border-rose-500', 'font-bold');
+            activeBtn.classList.remove('text-slate-500');
+        }
+
+        // --- ZADANIA (TO-DO) ---
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [
+            { id: 1, text: 'Spacer z psem o 15:00 (przed zmrokiem)', done: false },
+            { id: 2, text: 'Obiad z lodówki (gotowanie na 2 dni)', done: false },
+            { id: 3, text: 'Wypij szklankę wody z cytryną po wstaniu', done: true }
+        ];
+
+        function renderTasks() {
+            const list = document.getElementById('task-list');
+            list.innerHTML = '';
+            tasks.forEach(t => {
+                list.innerHTML += `
+                    <li class="flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-rose-50/50 transition">
+                        <label class="flex items-center gap-3 text-sm cursor-pointer ${t.done ? 'line-through text-slate-400' : 'text-slate-700'}">
+                            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})" class="accent-rose-500 w-4 h-4">
+                            ${t.text}
+                        </label>
+                        <button onclick="deleteTask(${t.id})" class="text-slate-300 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </li>
+                `;
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function addTask() {
+            const inp = document.getElementById('new-task-input');
+            if (inp.value.trim()) {
+                tasks.push({ id: Date.now(), text: inp.value.trim(), done: false });
+                inp.value = '';
+                renderTasks();
+            }
+        }
+
+        function toggleTask(id) {
+            tasks = tasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            renderTasks();
+        }
+
+        // --- BAZA PRZEPISÓW ---
+        const recipes = [
+            {
+                title: "Łosoś z kaszą gryczaną i brokułami",
+                type: "Obiad (na 2 dni)",
+                ingredients: ["Filet z łososia (250g)", "Kasza gryczana niepalona", "Brokuł", "Oliwa z oliwek", "Czosnek"],
+                desc: "Rybę upiecz z ziołami. Kaszę i brokuły ugotuj al dente. Polej oliwą."
+            },
+            {
+                title: "Gulaszowe Leczo z Indakiem i Ciecierzycą",
+                type: "Obiad (na 2 dni)",
+                ingredients: ["Pierś z indyka (300g)", "Cukinia", "Papryka czerwona", "Passata pomidorowa", "Ciecierzyca w puszce"],
+                desc: "Jednogarnkowe danie bogate w błonnik i białko. Podawaj z kaszą pęczak."
+            },
+            {
+                title: "Owsianka z chia, borówkami i orzechami",
+                type: "Śniadanie",
+                ingredients: ["Płatki owsiane górskie", "Nasiona chia", "Mleko migdałowe", "Borówki mrożone/świeże", "Orzechy włoskie"],
+                desc: "Zalej płatki gorącym mlekiem, dodaj chia, borówki i orzechy."
+            }
+        ];
+
+        function renderRecipes() {
+            const container = document.getElementById('recipes-container');
+            container.innerHTML = '';
+            recipes.forEach((r, idx) => {
+                container.innerHTML += `
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-rose-100 flex flex-col justify-between space-y-3">
+                        <div>
+                            <span class="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-1 rounded-md">${r.type}</span>
+                            <h3 class="font-bold text-slate-800 mt-2">${r.title}</h3>
+                            <p class="text-xs text-slate-500 mt-1">${r.desc}</p>
+                        </div>
+                        <button onclick="addRecipeIngredients(${idx})" class="w-full py-2 bg-rose-50 text-rose-600 rounded-xl text-xs font-bold hover:bg-rose-100 transition">
+                            + Dodaj składniki do listy zakupów
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        // --- ZAKUPY ---
+        let shopping = JSON.parse(localStorage.getItem('shopping')) || [
+            { id: 1, name: 'Brokuły (2 sztuki)', category: 'Warzywa i Owoce', done: false },
+            { id: 2, name: 'Borówki mrożone', category: 'Warzywa i Owoce', done: false },
+            { id: 3, name: 'Filet z łososia / indyk', category: 'Białko & Ryby', done: false },
+            { id: 4, name: 'Kasza gryczana niepalona', category: 'Produkty Zbożowe', done: false },
+            { id: 5, name: 'Oliwa z oliwek', category: 'Tłuszcze & Inne', done: false }
+        ];
+
+        function renderShopping() {
+            const container = document.getElementById('shopping-categories');
+            container.innerHTML = '';
+            const categories = ['Warzywa i Owoce', 'Białko & Ryby', 'Produkty Zbożowe', 'Tłuszcze & Inne'];
+
+            categories.forEach(cat => {
+                const items = shopping.filter(s => s.category === cat);
+                if (items.length > 0) {
+                    let itemsHTML = items.map(i => `
+                        <li class="flex items-center justify-between text-xs py-1">
+                            <label class="flex items-center gap-2 cursor-pointer ${i.done ? 'line-through text-slate-400' : 'text-slate-700'}">
+                                <input type="checkbox" ${i.done ? 'checked' : ''} onchange="toggleShopping(${i.id})" class="accent-rose-500">
+                                ${i.name}
+                            </label>
+                            <button onclick="deleteShopping(${i.id})" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-times"></i></button>
+                        </li>
+                    `).join('');
+
+                    container.innerHTML += `
+                        <div class="p-3 bg-slate-50 rounded-xl">
+                            <h4 class="text-xs font-bold text-slate-500 uppercase mb-2">${cat}</h4>
+                            <ul class="space-y-1">${itemsHTML}</ul>
+                        </div>
+                    `;
+                }
+            });
+            localStorage.setItem('shopping', JSON.stringify(shopping));
+        }
+
+        function addShoppingItem() {
+            const inp = document.getElementById('new-shop-input');
+            if (inp.value.trim()) {
+                shopping.push({ id: Date.now(), name: inp.value.trim(), category: 'Warzywa i Owoce', done: false });
+                inp.value = '';
+                renderShopping();
+            }
+        }
+
+        function addRecipeIngredients(idx) {
+            recipes[idx].ingredients.forEach(ing => {
+                shopping.push({ id: Date.now() + Math.random(), name: ing, category: 'Warzywa i Owoce', done: false });
+            });
+            renderShopping();
+            alert('Dodano składniki do listy zakupów!');
+        }
+
+        function toggleShopping(id) {
+            shopping = shopping.map(s => s.id === id ? { ...s, done: !s.done } : s);
+            renderShopping();
+        }
+
+        function deleteShopping(id) {
+            shopping = shopping.filter(s => s.id !== id);
+            renderShopping();
+        }
+
+        // --- NAWODNIENIE ---
+        let water = JSON.parse(localStorage.getItem('water')) || 0;
+        function updateWater() {
+            document.getElementById('water-count').innerText = `${water} / 10`;
+            document.getElementById('water-bar').style.width = `${(water / 10) * 100}%`;
+            localStorage.setItem('water', JSON.stringify(water));
+        }
+        function changeWater(delta) {
+            water = Math.max(0, Math.min(10, water + delta));
+            updateWater();
+        }
+
+        // --- CYKL I OBJAWY ---
+        let symptoms = JSON.parse(localStorage.getItem('symptoms')) || [];
+        function saveSymptom(e) {
+            e.preventDefault();
+            const pain = document.getElementById('pain-level').value;
+            const notes = document.getElementById('symptom-notes').value;
+            const tags = Array.from(document.querySelectorAll('.symptom-tag:checked')).map(cb => cb.value);
+
+            symptoms.unshift({ date: new Date().toLocaleDateString('pl-PL'), pain, notes, tags });
+            localStorage.setItem('symptoms', JSON.stringify(symptoms));
+            document.getElementById('symptom-notes').value = '';
+            renderSymptoms();
+        }
+
+        function renderSymptoms() {
+            const container = document.getElementById('symptoms-history');
+            container.innerHTML = symptoms.slice(0, 5).map(s => `
+                <div class="p-3 bg-slate-50 rounded-xl text-xs space-y-1">
+                    <div class="flex justify-between font-bold text-slate-700">
+                        <span>📅 ${s.date}</span>
+                        <span class="text-rose-600">Ból: ${s.pain}/10</span>
+                    </div>
+                    ${s.tags.length ? `<div class="text-slate-500">Objawy: ${s.tags.join(', ')}</div>` : ''}
+                    ${s.notes ? `<div class="italic text-slate-600">"${s.notes}"</div>` : ''}
+                </div>
+            `).join('') || '<p class="text-xs text-slate-400">Brak zapisanych wpisów.</p>';
+        }
+
+        // Inicjalizacja
+        renderTasks();
+        renderRecipes();
+        renderShopping();
+        updateWater();
+        renderSymptoms();
+    </script>
+</body>
+</html>
